@@ -64,7 +64,7 @@ def formListOfTweets(tweets):
             low = punc_stripped.lower()
             spell_checked = spell_check(low)
             p_stemmed = p_stem(spell_checked)
-            if isStopWord(p_stemmed): continue
+            if isStopWord(p_stemmed) or isStopWord(spell_checked): continue
             final_tweet.append(p_stemmed)
 
         final_tweets.append(final_tweet)
@@ -86,5 +86,36 @@ def saveAsCorpus(tweets):
     corpus = [d.doc2bow(tweet) for tweet in tweets]
     corpora.MmCorpus.serialize("tweet_corpus.mm", corpus)
 
-#saveAsList(formListOfTweets(getTweetTextFromHTML()))
+def saveForDMM(tweets):
+    f = open('tweetsForDMM.txt', 'w')
+    for tweet in tweets:
+        for word in tweet:
+            f.write("%s " % word)
+        f.write("\n")
+
+def removeWeirdUnicode(tweets):
+    clean_tweets = []
+    for tweet in tweets:
+        clean_tweet = []
+        for word in tweet:
+            word = word.encode('ascii', 'ignore')
+            if word:
+                clean_tweet.append(word)
+        clean_tweets.append(clean_tweet)
+    return clean_tweets
+
+def removeMi(tweets):
+    clean_tweets = []
+    for tweet in tweets:
+        clean_tweet = []
+        for word in tweet:
+            if word != 'mi':
+                clean_tweet.append(word)
+        clean_tweets.append(clean_tweet)
+    return clean_tweets
+
+#saveAsList(removeWeirdUnicode(formListOfTweets(getTweetTextFromHTML())))
+saveAsList(removeMi(loadAsList()))
 saveAsCorpus(loadAsList())
+print loadAsList()
+saveForDMM(loadAsList())

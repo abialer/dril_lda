@@ -1,9 +1,10 @@
 from gensim import corpora,models
+import pyLDAvis.gensim
 
 def lda():
     corpus = corpora.MmCorpus("tweet_corpus.mm")
     d = corpora.Dictionary.load("tweet_dict.dict")
-    lda = models.ldamodel.LdaModel(corpus, num_topics = 10, id2word=d)
+    lda = models.ldamodel.LdaModel(corpus, num_topics = 3, id2word=d)
     lda.save("lda.ginsem")
 
 def print_topics(topic_list):
@@ -17,6 +18,10 @@ def print_topics(topic_list):
             s += str(word[1]) + ": " + str(word[0]) + "\t"
         print s
 
-lda()
-lda_results = models.ldamodel.LdaModel.load("lda.ginsem")
-print_topics(lda_results.show_topics())
+def visualize(lda, corpus, dictionary):
+    pyLDAvis.gensim.prepare(lda, corpus, dictionary)
+
+#lda()
+#lda_results = models.ldamodel.LdaModel.load("lda.ginsem")
+#print_topics(lda_results.show_topics())
+visualize(models.ldamodel.LdaModel.load("lda.ginsem"), corpora.MmCorpus("tweet_corpus.mm"), corpora.Dictionary.load("tweet_dict.dict"))
